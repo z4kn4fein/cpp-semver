@@ -106,12 +106,12 @@ namespace semver
         }
     };
 
-    class prerelease {
+    class prerelease_descriptor {
     private:
         std::vector<prerelease_part> m_parts;
         std::string prerelease_str;
 
-        prerelease(const std::vector<prerelease_part>& parts)
+        prerelease_descriptor(const std::vector<prerelease_part>& parts)
                 : m_parts(parts) {
             if (parts.empty()) prerelease_str = "";
             for (const auto &part : parts) {
@@ -129,7 +129,7 @@ namespace semver
             return m_parts.front().value();
         }
 
-        prerelease increment() const {
+        prerelease_descriptor increment() const {
             std::vector<prerelease_part> new_parts = (m_parts);
             int last_numeric_index = -1;
             for (int i = 0; i < new_parts.size(); ++i) {
@@ -141,10 +141,10 @@ namespace semver
             } else {
                 new_parts.push_back(prerelease_part(default_prerelease_part));
             }
-            return prerelease(new_parts);
+            return prerelease_descriptor(new_parts);
         }
 
-        int compare(const prerelease& other) const {
+        int compare(const prerelease_descriptor& other) const {
             auto this_size = m_parts.size();
             auto other_size = other.m_parts.size();
 
@@ -156,50 +156,50 @@ namespace semver
             return (this_size < other_size) ? -1 : (this_size > other_size);
         }
 
-        bool operator<(const prerelease& other) const {
+        bool operator<(const prerelease_descriptor& other) const {
             return compare(other) == -1;
         }
 
-        bool operator>(const prerelease& other) const {
+        bool operator>(const prerelease_descriptor& other) const {
             return (other < *this);
         }
 
-        bool operator==(const prerelease& other) const {
+        bool operator==(const prerelease_descriptor& other) const {
             return prerelease_str == other.prerelease_str;
         }
 
-        bool operator!=(const prerelease& other) const {
+        bool operator!=(const prerelease_descriptor& other) const {
             return prerelease_str != other.prerelease_str;
         }
 
-        static prerelease parse(const std::string& prerelease_part_str) {
+        static prerelease_descriptor parse(const std::string& prerelease_part_str) {
             if (prerelease_part_str.empty()) return empty();
             std::vector<prerelease_part> prerelease_parts;
             std::vector<std::string> parts = split(prerelease_part_str, prerelease_delimiter);
             for(auto& part : parts) {
                 prerelease_parts.push_back(prerelease_part(part));
             }
-            return prerelease(prerelease_parts);
+            return prerelease_descriptor(prerelease_parts);
         }
 
-        static prerelease empty() {
-            return prerelease({});
+        static prerelease_descriptor empty() {
+            return prerelease_descriptor({});
         }
 
-        static prerelease initial() {
-            return prerelease::parse(default_prerelease_part);
+        static prerelease_descriptor initial() {
+            return prerelease_descriptor::parse(default_prerelease_part);
         }
 
     };
 
-    enum inc { major, minor, patch, pre_release };
+    enum inc { major, minor, patch, prerelease };
 
     class version {
     private:
         unsigned long m_major;
         unsigned long m_minor;
         unsigned long m_patch;
-        prerelease m_prerelease;
+        prerelease_descriptor m_prerelease;
         std::string m_build_meta;
 
         int compare(const version& other) const {
@@ -224,7 +224,7 @@ namespace semver
                 : m_major{major},
                   m_minor{minor},
                   m_patch{patch},
-                  m_prerelease{prerelease::parse(prerelease)},
+                  m_prerelease{prerelease_descriptor::parse(prerelease)},
                   m_build_meta{build_meta} { }
 
         unsigned long major() const { return m_major; }
@@ -274,7 +274,7 @@ namespace semver
                 case semver::major: return next_major(prerelease);
                 case semver::minor: return next_minor(prerelease);
                 case semver::patch: return next_patch(prerelease);
-                case pre_release: return next_prerelease(prerelease);
+                case semver::prerelease: return next_prerelease(prerelease);
                 default: throw semver_exception("Invalid 'by' parameter in 'increment()' function.");
             }
         }
