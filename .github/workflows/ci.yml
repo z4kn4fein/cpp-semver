@@ -9,7 +9,7 @@ jobs:
         build_type: [Debug, Release]
         os: [macos-latest, ubuntu-latest]
         compiler: [g++, clang++]
-        flags: [-std=c++17, -std=c++20]
+        flags: [-std=c++17, -std=c++2a]
     name: ${{matrix.os}} (${{matrix.compiler}} ${{matrix.build_type}})
     env:
       CXX: ${{ matrix.compiler }}
@@ -30,7 +30,7 @@ jobs:
       matrix:
         build_type: [ Debug, Release ]
         os: [ windows-latest ]
-        flags: [ "/std:c++11", "/std:c++latest" ]
+        flags: [ "/std:c++17", "/std:c++latest" ]
     name: ${{matrix.os}} ${{matrix.build_type}})
     env:
       CXXFLAGS: ${{ matrix.flags }}
