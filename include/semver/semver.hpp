@@ -1,3 +1,27 @@
+/*
+License: MIT (http://opensource.org/licenses/MIT).
+
+Copyright (c) 2022 Peter Csajtai <peter.csajtai@outlook.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 #ifndef Z4KN4FEIN_SEMVER_H
 #define Z4KN4FEIN_SEMVER_H
 
@@ -14,8 +38,8 @@ namespace semver
     const std::string version_pattern = "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$";
     const std::string loose_version_pattern = "^v?(0|[1-9]\\d*)(?:\\.(0|[1-9]\\d*))?(?:\\.(0|[1-9]\\d*))?(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$";
 
-    struct semver_exception : public std::exception {
-        semver_exception(const std::string& message) : std::exception(message.c_str()) { }
+    struct semver_exception : public std::runtime_error {
+        semver_exception(const std::string& message) : std::runtime_error(message) { }
     };
 
     inline std::vector<std::string> split(const std::string& text, const char& delimiter) {
@@ -89,20 +113,15 @@ namespace semver
 
         prerelease(const std::vector<prerelease_part>& parts)
                 : m_parts(parts) {
-            if (parts.empty()) {
-                prerelease_str = "";
-            }
+            if (parts.empty()) prerelease_str = "";
             for (const auto &part : parts) {
-                if (!prerelease_str.empty()) {
-                    prerelease_str += prerelease_delimiter;
-                }
+                if (!prerelease_str.empty()) prerelease_str += prerelease_delimiter;
                 prerelease_str += part.value();
             }
         }
 
     public:
         std::string str() const { return prerelease_str; }
-
         bool is_empty() const { return m_parts.empty(); }
 
         std::string identity() const {
@@ -114,9 +133,7 @@ namespace semver
             std::vector<prerelease_part> new_parts = (m_parts);
             int last_numeric_index = -1;
             for (int i = 0; i < new_parts.size(); ++i) {
-                if (new_parts[i].numeric()) {
-                    last_numeric_index = i;
-                }
+                if (new_parts[i].numeric()) last_numeric_index = i;
             }
             if (last_numeric_index != -1) {
                 prerelease_part last = new_parts[last_numeric_index];
@@ -156,17 +173,12 @@ namespace semver
         }
 
         static prerelease parse(const std::string& prerelease_part_str) {
-            if (prerelease_part_str.empty()) {
-                return empty();
-            }
-
+            if (prerelease_part_str.empty()) return empty();
             std::vector<prerelease_part> prerelease_parts;
             std::vector<std::string> parts = split(prerelease_part_str, prerelease_delimiter);
-
             for(auto& part : parts) {
                 prerelease_parts.push_back(prerelease_part(part));
             }
-
             return prerelease(prerelease_parts);
         }
 
@@ -226,12 +238,8 @@ namespace semver
 
         std::string str() const {
             std::string result = std::to_string(m_major) + "." + std::to_string(m_minor) + "." + std::to_string(m_patch);
-            if (!m_prerelease.is_empty()) {
-                result += "-" + m_prerelease.str();
-            }
-            if (!m_build_meta.empty()) {
-                result += "+" + m_build_meta;
-            }
+            if (!m_prerelease.is_empty()) result += "-" + m_prerelease.str();
+            if (!m_build_meta.empty()) result += "+" + m_build_meta;
             return result;
         }
 
@@ -338,9 +346,7 @@ namespace semver
     };
 
     inline std::ostream & operator<<(std::ostream& str, const version& version) {
-        for (const auto s : version.str()) {
-            str.put(s);
-        }
+        for (const auto s : version.str()) str.put(s);
         return str;
     }
 }
