@@ -1,6 +1,8 @@
 #include <catch2/catch_all.hpp>
 #include <semver/semver.hpp>
 
+using namespace semver::literals;
+
 TEST_CASE("Test invalid versions", "[version]") {
     REQUIRE_THROWS_AS(semver::version::parse("-1.0.0"), semver::semver_exception);
     REQUIRE_THROWS_AS(semver::version::parse("1.-1.0"), semver::semver_exception);
@@ -164,6 +166,28 @@ TEST_CASE("Test version components, only built meta", "[version]") {
     REQUIRE(ver.build_meta() == "build");
     REQUIRE_FALSE(ver.is_prerelease());
     REQUIRE(ver.is_stable());
+}
+
+TEST_CASE("Test version components, user-defined literal", "[version]") {
+    semver::version ver = "1.2.3-alpha+build"_v;
+    REQUIRE(ver.major() == 1);
+    REQUIRE(ver.minor() == 2);
+    REQUIRE(ver.patch() == 3);
+    REQUIRE(ver.prerelease() == "alpha");
+    REQUIRE(ver.build_meta() == "build");
+    REQUIRE(ver.is_prerelease());
+    REQUIRE_FALSE(ver.is_stable());
+}
+
+TEST_CASE("Test version components, user-defined loose literal", "[version]") {
+    semver::version ver = "v1.2-alpha+build"_lv;
+    REQUIRE(ver.major() == 1);
+    REQUIRE(ver.minor() == 2);
+    REQUIRE(ver.patch() == 0);
+    REQUIRE(ver.prerelease() == "alpha");
+    REQUIRE(ver.build_meta() == "build");
+    REQUIRE(ver.is_prerelease());
+    REQUIRE_FALSE(ver.is_stable());
 }
 
 TEST_CASE("Test default version", "[version]") {

@@ -349,6 +349,17 @@ namespace semver
         for (const auto s : version.str()) str.put(s);
         return str;
     }
+
+    namespace literals
+    {
+        inline version operator""_v(const char* text, std::size_t length) {
+            return version::parse(std::string(text, length));
+        }
+
+        inline version operator""_lv(const char* text, std::size_t length) {
+            return version::parse(std::string(text, length), false);
+        }
+    }
 }
 
 #endif // Z4KN4FEIN_SEMVER_H
