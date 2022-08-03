@@ -3,6 +3,8 @@ project(semver LANGUAGES CXX VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 17)
 
+option(SEMVER_BUILD_TESTS "Enable test execution" OFF)
+
 include(GNUInstallDirs)
 
 ## --------------------------------------------------------------------
@@ -21,8 +23,7 @@ add_library (${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 target_include_directories(
         ${PROJECT_NAME} INTERFACE
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>
-)
+        $<INSTALL_INTERFACE:include>)
 
 ## --------------------------------------------------------------------
 ## TESTS
