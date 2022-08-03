@@ -17,7 +17,7 @@ provides the ability to **parse**, **compare**, and **increment** semantic versi
 ## Installation
 1. Include `semver.hpp`
 
-   As `semver` is a header-only library, you can download and copy [`semver.hpp`](https://github.com/z4kn4fein/cpp-semver/tree/main/include/semver) 
+   As `semver` is a header-only library, you can download and copy [`semver.hpp`](https://github.com/z4kn4fein/cpp-semver/blob/main/include/semver/semver.hpp) 
    to your project's include path.
 
 2. With `cmake`
