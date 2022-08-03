@@ -70,7 +70,6 @@ namespace semver
         bool m_numeric = false;
         std::string m_value;
         unsigned long m_numeric_value;
-
     public:
         prerelease_part(const std::string& part) {
             if (part.empty()) {
@@ -119,7 +118,6 @@ namespace semver
                 prerelease_str += part.value();
             }
         }
-
     public:
         std::string str() const { return prerelease_str; }
         bool is_empty() const { return m_parts.empty(); }
@@ -189,7 +187,6 @@ namespace semver
         static prerelease_descriptor initial() {
             return prerelease_descriptor::parse(default_prerelease_part);
         }
-
     };
 
     enum inc { major, minor, patch, prerelease };
@@ -214,7 +211,6 @@ namespace semver
             if (!m_prerelease.is_empty() && !other.m_prerelease.is_empty()) return m_prerelease.compare(other.m_prerelease);
             return 0;
         }
-
     public:
         version(unsigned long major = 0,
                 unsigned long minor = 0,
