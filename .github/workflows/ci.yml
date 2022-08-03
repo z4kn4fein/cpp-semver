@@ -6,11 +6,11 @@ jobs:
     runs-on: ${{matrix.os}}
     strategy:
       matrix:
-        build_type: [Debug, Release]
+        build: [Debug, Release]
         os: [macos-latest, ubuntu-latest]
         compiler: [g++, clang++]
         flags: [-std=c++17, -std=c++2a]
-    name: ${{matrix.os}} (${{matrix.compiler}} ${{matrix.build_type}})
+    name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build}} ${{matrix.flags}}
     env:
       CXX: ${{ matrix.compiler }}
       CXXFLAGS: ${{ matrix.flags }}
@@ -18,30 +18,31 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: cmake
-      run: cmake -S . -B build -D CMAKE_BUILD_TYPE=${{matrix.build_type}} -DSEMVER_BUILD_TESTS=ON
+      run: cmake -S . -B build -D CMAKE_BUILD_TYPE=${{matrix.build}} -DSEMVER_BUILD_TESTS=ON
     - name: build
-      run: cmake --build build --parallel 10
+      run: cmake --build build --config ${{matrix.build}} --parallel 10
     - name: test
-      run: cd build; ctest -C ${{matrix.build_type}} -j 10
+      run: cd build; ctest -C ${{matrix.build}} -j 10
 
   windows:
     runs-on: ${{matrix.os}}
     strategy:
       matrix:
-        build_type: [ Debug, Release ]
-        os: [ windows-latest ]
+        build: [ Debug, Release ]
+        os: [ windows-2016, windows-2019, windows-latest ]
+        arch: [ Win32, x64 ]
         flags: [ "/std:c++17", "/std:c++latest" ]
-    name: ${{matrix.os}} ${{matrix.build_type}})
+    name: ${{matrix.os}} ${{matrix.arch}} ${{matrix.build}} ${{matrix.flags}}
     env:
       CXXFLAGS: ${{ matrix.flags }}
       CTEST_OUTPUT_ON_FAILURE: 1
     steps:
     - uses: actions/checkout@v3
     - name: cmake
-      run: cmake -S . -B build -D CMAKE_BUILD_TYPE=${{matrix.build_type}} -DSEMVER_BUILD_TESTS=ON
+      run: cmake -S . -B build -A ${{matrix.arch}} -D CMAKE_BUILD_TYPE=${{matrix.build}} -DSEMVER_BUILD_TESTS=ON
     - name: build
-      run: cmake --build build --parallel 10
+      run: cmake --build build --config ${{matrix.build}} --parallel 10
     - name: test
-      run: cd build; ctest -C ${{matrix.build_type}} -j 10
+      run: cd build; ctest -C ${{matrix.build}} -j 10
 
 
