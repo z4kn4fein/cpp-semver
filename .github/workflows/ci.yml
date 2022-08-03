@@ -20,10 +20,10 @@ jobs:
     - name: cmake
       run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{matrix.build}} -DSEMVER_BUILD_TESTS=ON
     - name: build
-      run: cmake --build build --config ${{matrix.build}} --parallel 10
+      run: cmake --build build --config ${{matrix.build}} --parallel 4
     - name: test
       working-directory: build
-      run: ctest -C ${{matrix.build}} -j 10
+      run: ctest -C ${{matrix.build}} -j4
 
   windows:
     runs-on: ${{matrix.os}}
@@ -42,10 +42,10 @@ jobs:
     - name: cmake
       run: cmake -S . -B build -A ${{matrix.arch}} -DCMAKE_BUILD_TYPE=${{matrix.build}} -DSEMVER_BUILD_TESTS=ON
     - name: build
-      run: cmake --build build --config ${{matrix.build}} --parallel 10
+      run: cmake --build build --config ${{matrix.build}} --parallel 4
     - name: test
       working-directory: build
-      run: ctest -C ${{matrix.build}} -j 10
+      run: ctest -C ${{matrix.build}} -j4
 
   coverage:
     needs: [ unix, windows ]
@@ -58,10 +58,10 @@ jobs:
     - name: cmake
       run: cmake -S . -B build -DSEMVER_BUILD_TESTS=ON
     - name: build
-      run: cmake --build build --parallel 10
+      run: cmake --build build --parallel 4
     - name: test
       working-directory: build
-      run: ctest -j 10
+      run: ctest -j4
     - name: lcov
       working-directory: build
       run: |
