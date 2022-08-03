@@ -243,19 +243,19 @@ namespace semver
             return version(m_major, m_minor, m_patch);
         }
 
-        version next_major(const std::string& prerelease = "") {
+        version next_major(const std::string& prerelease = "") const {
             return version(m_major + 1, 0, 0, prerelease);
         }
 
-        version next_minor(const std::string& prerelease = "") {
+        version next_minor(const std::string& prerelease = "") const {
             return version(m_major, m_minor + 1, 0, prerelease);
         }
 
-        version next_patch(const std::string& prerelease = "") {
+        version next_patch(const std::string& prerelease = "") const {
             return version(m_major, m_minor, (!is_prerelease() || !prerelease.empty() ? m_patch + 1 : m_patch), prerelease);
         }
 
-        version next_prerelease(const std::string& prerelease = "") {
+        version next_prerelease(const std::string& prerelease = "") const {
             std::string pre = default_prerelease_part;
             if (!prerelease.empty()) {
                 pre = is_prerelease() && m_prerelease.identity() == prerelease ? m_prerelease.increment().str() : prerelease;
@@ -265,7 +265,7 @@ namespace semver
             return version(m_major, m_minor, is_prerelease() ? m_patch : m_patch + 1, pre);
         }
 
-        version increment(inc by, const std::string& prerelease = "") {
+        version increment(inc by, const std::string& prerelease = "") const {
             switch (by) {
                 case semver::major: return next_major(prerelease);
                 case semver::minor: return next_minor(prerelease);
