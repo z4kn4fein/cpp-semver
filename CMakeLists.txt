@@ -3,7 +3,7 @@ project(semver LANGUAGES CXX VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 17)
 
-option(SEMVER_BUILD_TESTS "Enable test execution" OFF)
+option(SEMVER_BUILD_TESTS "Enable builds of tests" ON)
 
 include(GNUInstallDirs)
 
