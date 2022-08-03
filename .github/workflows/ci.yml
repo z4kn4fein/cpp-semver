@@ -29,7 +29,7 @@ jobs:
     strategy:
       matrix:
         build: [ Debug, Release ]
-        os: [ windows-2016, windows-2019, windows-latest ]
+        os: [ windows-2019, windows-latest ]
         arch: [ Win32, x64 ]
         flags: [ "/std:c++17", "/std:c++latest" ]
     name: ${{matrix.os}} ${{matrix.arch}} ${{matrix.build}} ${{matrix.flags}}
