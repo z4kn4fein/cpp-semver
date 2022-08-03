@@ -18,11 +18,12 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: cmake
-      run: cmake -S . -B build -D CMAKE_BUILD_TYPE=${{matrix.build}} -DSEMVER_BUILD_TESTS=ON
+      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{matrix.build}} -DSEMVER_BUILD_TESTS=ON
     - name: build
       run: cmake --build build --config ${{matrix.build}} --parallel 10
     - name: test
-      run: cd build; ctest -C ${{matrix.build}} -j 10
+      working-directory: build
+      run: ctest -C ${{matrix.build}} -j 10
 
   windows:
     runs-on: ${{matrix.os}}
@@ -39,10 +40,37 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: cmake
-      run: cmake -S . -B build -A ${{matrix.arch}} -D CMAKE_BUILD_TYPE=${{matrix.build}} -DSEMVER_BUILD_TESTS=ON
+      run: cmake -S . -B build -A ${{matrix.arch}} -DCMAKE_BUILD_TYPE=${{matrix.build}} -DSEMVER_BUILD_TESTS=ON
     - name: build
       run: cmake --build build --config ${{matrix.build}} --parallel 10
     - name: test
-      run: cd build; ctest -C ${{matrix.build}} -j 10
+      working-directory: build
+      run: ctest -C ${{matrix.build}} -j 10
+
+  coverage:
+    needs: [ unix, windows ]
+    runs-on: ubuntu-latest
+    env:
+      CTEST_OUTPUT_ON_FAILURE: 1
+      CXXFLAGS: "--coverage -fno-inline"
+    steps:
+    - uses: actions/checkout@v3
+    - name: cmake
+      run: cmake -S . -B build -DSEMVER_BUILD_TESTS=ON
+    - name: build
+      run: cmake --build build --parallel 10
+    - name: test
+      working-directory: build
+      run: ctest -j 10
+    - name: lcov
+      working-directory: build
+      run: |
+        sudo apt install lcov
+        lcov -c -d . -o cov.info
+        lcov -l cov.info
+    - name: codecov
+      working-directory: build
+      shell: bash
+      run: bash <(curl -s https://codecov.io/bash) -f cov.info
 
 
