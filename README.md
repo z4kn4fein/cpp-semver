@@ -32,6 +32,12 @@ provides the ability to **parse**, **compare**, and **increment** semantic versi
    FetchContent_MakeAvailable(cpp-semver)
    ```
 
+   This will produce the target `semver` which you can link against the typical way:
+
+   ```cmake
+   target_link_libraries(your_target_name PRIVATE semver)
+   ```
+
 ## Usage
 The following options are available to construct a `version`:
 1. Building part by part.
