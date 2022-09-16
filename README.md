@@ -3,6 +3,7 @@
 [![Build](https://img.shields.io/github/workflow/status/z4kn4fein/cpp-semver/CPP%20Semver%20CI?logo=GitHub&label=windows%20%2F%20macos%20%2F%20linux)](https://github.com/z4kn4fein/cpp-semver/actions/workflows/ci.yml)
 [![Build](https://img.shields.io/github/workflow/status/z4kn4fein/cpp-semver/CPP%20Semver%20Sanitize?logo=GitHub&label=sanitize)](https://github.com/z4kn4fein/cpp-semver/actions/workflows/sanitize.yml)
 [![codecov](https://codecov.io/gh/z4kn4fein/cpp-semver/branch/main/graph/badge.svg?token=N3EF1SOX18)](https://codecov.io/gh/z4kn4fein/cpp-semver)
+[![vcpkg](https://img.shields.io/badge/package-vcpkg-blue)](https://github.com/microsoft/vcpkg/tree/master/ports/z4kn4fein-semver)
 [![godbolt](https://img.shields.io/badge/try-on_godbolt-blue)](https://godbolt.org/z/ad9YYdc91)
 
 Semantic Versioning library for modern C++.
@@ -37,6 +38,9 @@ provides the ability to **parse**, **compare**, and **increment** semantic versi
    ```cmake
    target_link_libraries(your_target_name PRIVATE semver)
    ```
+3. With `vcpkg`
+
+   If you are using vcpkg for external dependencies, then you can install the package with `vcpkg install z4kn4fein-semver`.
 
 ## Usage
 The following options are available to construct a `version`:
