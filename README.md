@@ -40,7 +40,10 @@ provides the ability to **parse**, **compare**, and **increment** semantic versi
    ```
 3. With `vcpkg`
 
-   If you are using vcpkg for external dependencies, then you can install the package with `vcpkg install z4kn4fein-semver`.
+   If you are using vcpkg for external dependencies, then you can install the package with:
+   ```bash
+   vcpkg install z4kn4fein-semver
+   ```
 
 ## Usage
 The following options are available to construct a `version`:
