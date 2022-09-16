@@ -28,7 +28,7 @@ provides the ability to **parse**, **compare**, and **increment** semantic versi
    FetchContent_Declare(
        cpp-semver
        GIT_REPOSITORY https://github.com/z4kn4fein/cpp-semver.git
-       GIT_TAG v0.1.0)
+       GIT_TAG v0.2.2)
    FetchContent_MakeAvailable(cpp-semver)
    ```
 

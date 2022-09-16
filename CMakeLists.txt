@@ -3,7 +3,13 @@ project(semver LANGUAGES CXX VERSION 0.2.0)
 
 set(CMAKE_CXX_STANDARD 17)
 
-option(SEMVER_BUILD_TESTS "Enable builds of tests" ON)
+set(TOP_PROJECT OFF)
+if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    set(TOP_PROJECT ON)
+endif()
+
+option(SEMVER_BUILD_TESTS "Enable builds of tests" ${TOP_PROJECT})
+option(SEMVER_INSTALL "Enable install target" ${TOP_PROJECT})
 
 include(GNUInstallDirs)
 
@@ -50,22 +56,24 @@ write_basic_package_version_file(
         COMPATIBILITY SameMajorVersion
         ARCH_INDEPENDENT)
 
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+if (SEMVER_INSTALL)
+    install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-install(FILES
-        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake
-        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake
-        DESTINATION ${CMAKE_INSTALL_DATADIR}/cmake/${PROJECT_NAME})
+    install(FILES
+            ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake
+            ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake
+            DESTINATION ${CMAKE_INSTALL_DATADIR}/cmake/${PROJECT_NAME})
 
-export(TARGETS ${PROJECT_NAME}
-       NAMESPACE ${PROJECT_NAME}::
-       FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-targets.cmake)
+    export(TARGETS ${PROJECT_NAME}
+           NAMESPACE ${PROJECT_NAME}::
+           FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-targets.cmake)
 
-install(TARGETS ${PROJECT_NAME}
-        EXPORT ${PROJECT_NAME}-targets
-        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+    install(TARGETS ${PROJECT_NAME}
+            EXPORT ${PROJECT_NAME}-targets
+            INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-install(EXPORT ${PROJECT_NAME}-targets
-        NAMESPACE ${PROJECT_NAME}::
-        DESTINATION ${CMAKE_INSTALL_DATADIR}/cmake/${PROJECT_NAME})
+    install(EXPORT ${PROJECT_NAME}-targets
+            NAMESPACE ${PROJECT_NAME}::
+            DESTINATION ${CMAKE_INSTALL_DATADIR}/cmake/${PROJECT_NAME})
+endif()
