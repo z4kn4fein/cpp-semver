@@ -1,7 +1,7 @@
 # cpp-semver
 
-[![Build](https://img.shields.io/github/workflow/status/z4kn4fein/cpp-semver/CPP%20Semver%20CI?logo=GitHub&label=windows%20%2F%20macos%20%2F%20linux)](https://github.com/z4kn4fein/cpp-semver/actions/workflows/ci.yml)
-[![Build](https://img.shields.io/github/workflow/status/z4kn4fein/cpp-semver/CPP%20Semver%20Sanitize?logo=GitHub&label=sanitize)](https://github.com/z4kn4fein/cpp-semver/actions/workflows/sanitize.yml)
+[![Build](https://img.shields.io/github/actions/workflow/status/z4kn4fein/cpp-semver/ci.yml?logo=GitHub&label=windows%20%2F%20macos%20%2F%20linux&branch=main)](https://github.com/z4kn4fein/cpp-semver/actions/workflows/ci.yml)
+[![Build](https://img.shields.io/github/actions/workflow/status/z4kn4fein/cpp-semver/sanitize.yml?logo=GitHub&label=sanitize&branch=main)](https://github.com/z4kn4fein/cpp-semver/actions/workflows/sanitize.yml)
 [![codecov](https://codecov.io/gh/z4kn4fein/cpp-semver/branch/main/graph/badge.svg?token=N3EF1SOX18)](https://codecov.io/gh/z4kn4fein/cpp-semver)
 [![vcpkg](https://img.shields.io/badge/package-vcpkg-blue)](https://github.com/microsoft/vcpkg/tree/master/ports/z4kn4fein-semver)
 [![godbolt](https://img.shields.io/badge/try-on_godbolt-blue)](https://godbolt.org/z/ad9YYdc91)
