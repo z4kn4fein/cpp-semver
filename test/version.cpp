@@ -116,6 +116,7 @@ TEST_CASE("Test version strings", "[version]") {
     REQUIRE(semver::version::parse("1", false).str() == "1.0.0");
     REQUIRE(semver::version::parse("1.2", false).str() == "1.2.0");
     REQUIRE(semver::version::parse("v1.2", false).str() == "1.2.0");
+    REQUIRE(semver::version::parse("18446744073709551615.18446744073709551614.18446744073709551613").str() == "18446744073709551615.18446744073709551614.18446744073709551613");
 
     REQUIRE(semver::version::parse("v1.2.3-alpha+build", false).str() == "1.2.3-alpha+build");
     REQUIRE(semver::version::parse("v1-alpha+build", false).str() == "1.0.0-alpha+build");
