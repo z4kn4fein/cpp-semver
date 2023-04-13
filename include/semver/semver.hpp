@@ -31,16 +31,28 @@ SOFTWARE.
 
 namespace semver
 {
+
+    using numeric_part = uint64_t;
+
     const std::string default_prerelease_part = "0";
     const char prerelease_delimiter = '.';
     const std::string numbers = "0123456789";
     const std::string prerelease_allowed_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-";
-    const std::string version_pattern = "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$";
-    const std::string loose_version_pattern = "^v?(0|[1-9]\\d*)(?:\\.(0|[1-9]\\d*))?(?:\\.(0|[1-9]\\d*))?(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$";
+    const std::string version_pattern = "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)"
+                                        "(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))"
+                                        "?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$";
+    const std::string loose_version_pattern = "^v?(0|[1-9]\\d*)(?:\\.(0|[1-9]\\d*))?(?:\\.(0|[1-9]\\d*))"
+                                              "?(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))"
+                                              "?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$";
 
     struct semver_exception : public std::runtime_error {
         semver_exception(const std::string& message) : std::runtime_error(message) { }
     };
+
+    inline numeric_part parse_numeric_part(const std::string& version_part)
+    {
+        return static_cast<numeric_part>(std::stoull(version_part));
+    }
 
     inline std::vector<std::string> split(const std::string& text, const char& delimiter) {
         std::size_t pos_start = 0, pos_end, delim_len = 1;
@@ -69,7 +81,7 @@ namespace semver
     private:
         bool m_numeric = false;
         std::string m_value;
-        unsigned long m_numeric_value;
+        numeric_part m_numeric_value;
     public:
         prerelease_part(const std::string& part) {
             if (part.empty()) {
@@ -81,7 +93,7 @@ namespace semver
                     throw semver_exception(
                             "Pre-release part '" + part + "' is numeric but contains a leading zero.");
                 }
-                m_numeric_value = std::stoul(part);
+                m_numeric_value = parse_numeric_part(part);
                 m_numeric = true;
             }
             if (!is_valid_prerelease(part)) {
@@ -93,7 +105,7 @@ namespace semver
 
         bool numeric() const { return m_numeric; }
         std::string value() const { return m_value; }
-        unsigned long numeric_value() const { return m_numeric_value; }
+        numeric_part numeric_value() const { return m_numeric_value; }
 
         int compare(const prerelease_part& other) const {
             if (m_numeric && !other.m_numeric) return -1;
@@ -193,9 +205,9 @@ namespace semver
 
     class version {
     private:
-        unsigned long m_major;
-        unsigned long m_minor;
-        unsigned long m_patch;
+        numeric_part m_major;
+        numeric_part m_minor;
+        numeric_part m_patch;
         prerelease_descriptor m_prerelease;
         std::string m_build_meta;
 
@@ -212,9 +224,9 @@ namespace semver
             return 0;
         }
     public:
-        version(unsigned long major = 0,
-                unsigned long minor = 0,
-                unsigned long patch = 0,
+        version(numeric_part major = 0,
+                numeric_part minor = 0,
+                numeric_part patch = 0,
                 std::string prerelease = "",
                 std::string build_meta = "")
                 : m_major{major},
@@ -223,9 +235,9 @@ namespace semver
                   m_prerelease{prerelease_descriptor::parse(prerelease)},
                   m_build_meta{build_meta} { }
 
-        unsigned long major() const { return m_major; }
-        unsigned long minor() const { return m_minor; }
-        unsigned long patch() const { return m_patch; }
+        numeric_part major() const { return m_major; }
+        numeric_part minor() const { return m_minor; }
+        numeric_part patch() const { return m_patch; }
         std::string prerelease() const { return m_prerelease.str(); }
         std::string build_meta() const { return m_build_meta; }
 
@@ -302,9 +314,9 @@ namespace semver
         static version parse(const std::string& version_str, bool strict = true) {
             std::regex regex(strict ? version_pattern : loose_version_pattern);
             std::cmatch match;
-            unsigned long major;
-            unsigned long minor;
-            unsigned long patch;
+            numeric_part major;
+            numeric_part minor;
+            numeric_part patch;
             std::string prerelease = "";
             std::string build_meta = "";
 
@@ -323,13 +335,13 @@ namespace semver
 
             try {
                 if (strict && major_m.matched && minor_m.matched && patch_m.matched) {
-                    major = std::stoul(major_m);
-                    minor = std::stoul(minor_m);
-                    patch = std::stoul(patch_m);
+                    major = parse_numeric_part(major_m);
+                    minor = parse_numeric_part(minor_m);
+                    patch = parse_numeric_part(patch_m);
                 } else if (!strict && major_m.matched) {
-                    major = std::stoul(major_m);
-                    minor = minor_m.matched ? std::stoul(minor_m) : 0;
-                    patch = patch_m.matched ? std::stoul(patch_m) : 0;
+                    major = parse_numeric_part(major_m);
+                    minor = minor_m.matched ? parse_numeric_part(minor_m) : 0;
+                    patch = patch_m.matched ? parse_numeric_part(patch_m) : 0;
                 } else {
                     throw semver_exception("Invalid version: " + version_str);
                 }
