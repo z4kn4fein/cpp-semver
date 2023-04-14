@@ -142,7 +142,7 @@ namespace semver
         prerelease_descriptor increment() const {
             std::vector<prerelease_part> new_parts = (m_parts);
             int last_numeric_index = -1;
-            for (int i = 0; i < new_parts.size(); ++i) {
+            for (size_t i = 0; i < new_parts.size(); ++i) {
                 if (new_parts[i].numeric()) last_numeric_index = i;
             }
             if (last_numeric_index != -1) {
@@ -159,7 +159,7 @@ namespace semver
             auto other_size = other.m_parts.size();
 
             auto count = std::min(this_size, other_size);
-            for (int i = 0; i < count; ++i) {
+            for (size_t i = 0; i < count; ++i) {
                 int cmp = m_parts[i].compare(other.m_parts[i]);
                 if (cmp != 0) return cmp;
             }
