@@ -141,11 +141,15 @@ namespace semver
 
         prerelease_descriptor increment() const {
             std::vector<prerelease_part> new_parts = (m_parts);
-            int last_numeric_index = -1;
+            size_t last_numeric_index = 0;
+            bool last_numeric_index_found = false;
             for (size_t i = 0; i < new_parts.size(); ++i) {
-                if (new_parts[i].numeric()) last_numeric_index = i;
+                if (new_parts[i].numeric()){
+                    last_numeric_index = i;
+                    last_numeric_index_found = true;
+                }
             }
-            if (last_numeric_index != -1) {
+            if (last_numeric_index_found) {
                 prerelease_part last = new_parts[last_numeric_index];
                 new_parts[last_numeric_index] = prerelease_part(std::to_string(last.numeric_value() + 1));
             } else {
