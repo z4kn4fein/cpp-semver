@@ -27,13 +27,11 @@ SOFTWARE.
 
 #include <string>
 #include <regex>
+#include <utility>
 #include <vector>
 
 namespace semver
 {
-
-    using numeric_part = uint64_t;
-
     const std::string default_prerelease_part = "0";
     const char prerelease_delimiter = '.';
     const std::string numbers = "0123456789";
@@ -46,12 +44,12 @@ namespace semver
                                               "?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$";
 
     struct semver_exception : public std::runtime_error {
-        semver_exception(const std::string& message) : std::runtime_error(message) { }
+        explicit semver_exception(const std::string& message) : std::runtime_error(message) { }
     };
 
-    inline numeric_part parse_numeric_part(const std::string& version_part)
+    inline uint64_t parse_numeric_part(const std::string& version_part)
     {
-        return static_cast<numeric_part>(std::stoull(version_part));
+        return static_cast<uint64_t>(std::stoull(version_part));
     }
 
     inline std::vector<std::string> split(const std::string& text, const char& delimiter) {
@@ -81,9 +79,9 @@ namespace semver
     private:
         bool m_numeric = false;
         std::string m_value;
-        numeric_part m_numeric_value;
+        uint64_t m_numeric_value;
     public:
-        prerelease_part(const std::string& part) {
+        explicit prerelease_part(const std::string& part) {
             if (part.empty()) {
                 throw semver_exception("Pre-release identity contains an empty part.");
             }
@@ -103,11 +101,11 @@ namespace semver
             m_value = part;
         }
 
-        bool numeric() const { return m_numeric; }
-        std::string value() const { return m_value; }
-        numeric_part numeric_value() const { return m_numeric_value; }
+        [[nodiscard]] bool numeric() const { return m_numeric; }
+        [[nodiscard]] std::string value() const { return m_value; }
+        [[nodiscard]] uint64_t numeric_value() const { return m_numeric_value; }
 
-        int compare(const prerelease_part& other) const {
+        [[nodiscard]] int compare(const prerelease_part& other) const {
             if (m_numeric && !other.m_numeric) return -1;
             if (!m_numeric && other.m_numeric) return 1;
             if (m_numeric && other.m_numeric) {
@@ -122,7 +120,7 @@ namespace semver
         std::vector<prerelease_part> m_parts;
         std::string prerelease_str;
 
-        prerelease_descriptor(const std::vector<prerelease_part>& parts)
+        explicit prerelease_descriptor(const std::vector<prerelease_part>& parts)
                 : m_parts(parts) {
             if (parts.empty()) prerelease_str = "";
             for (const auto &part : parts) {
@@ -131,15 +129,15 @@ namespace semver
             }
         }
     public:
-        std::string str() const { return prerelease_str; }
-        bool is_empty() const { return m_parts.empty(); }
+        [[nodiscard]] std::string str() const { return prerelease_str; }
+        [[nodiscard]] bool is_empty() const { return m_parts.empty(); }
 
-        std::string identity() const {
+        [[nodiscard]] std::string identity() const {
             if (is_empty()) return "";
             return m_parts.front().value();
         }
 
-        prerelease_descriptor increment() const {
+        [[nodiscard]] prerelease_descriptor increment() const {
             std::vector<prerelease_part> new_parts = (m_parts);
             size_t last_numeric_index = 0;
             bool last_numeric_index_found = false;
@@ -153,12 +151,12 @@ namespace semver
                 prerelease_part last = new_parts[last_numeric_index];
                 new_parts[last_numeric_index] = prerelease_part(std::to_string(last.numeric_value() + 1));
             } else {
-                new_parts.push_back(prerelease_part(default_prerelease_part));
+                new_parts.emplace_back(default_prerelease_part);
             }
             return prerelease_descriptor(new_parts);
         }
 
-        int compare(const prerelease_descriptor& other) const {
+        [[nodiscard]] int compare(const prerelease_descriptor& other) const {
             auto this_size = m_parts.size();
             auto other_size = other.m_parts.size();
 
@@ -191,7 +189,7 @@ namespace semver
             std::vector<prerelease_part> prerelease_parts;
             std::vector<std::string> parts = split(prerelease_part_str, prerelease_delimiter);
             for(auto& part : parts) {
-                prerelease_parts.push_back(prerelease_part(part));
+                prerelease_parts.emplace_back(part);
             }
             return prerelease_descriptor(prerelease_parts);
         }
@@ -209,13 +207,13 @@ namespace semver
 
     class version {
     private:
-        numeric_part m_major;
-        numeric_part m_minor;
-        numeric_part m_patch;
+        uint64_t m_major;
+        uint64_t m_minor;
+        uint64_t m_patch;
         prerelease_descriptor m_prerelease;
         std::string m_build_meta;
 
-        int compare(const version& other) const {
+        [[nodiscard]] int compare(const version& other) const {
             if (m_major > other.m_major) return 1;
             if (m_major < other.m_major) return -1;
             if (m_minor > other.m_minor) return 1;
@@ -228,50 +226,50 @@ namespace semver
             return 0;
         }
     public:
-        version(numeric_part major = 0,
-                numeric_part minor = 0,
-                numeric_part patch = 0,
-                std::string prerelease = "",
+        explicit version(uint64_t major = 0,
+                uint64_t minor = 0,
+                uint64_t patch = 0,
+                const std::string& prerelease = "",
                 std::string build_meta = "")
                 : m_major{major},
                   m_minor{minor},
                   m_patch{patch},
                   m_prerelease{prerelease_descriptor::parse(prerelease)},
-                  m_build_meta{build_meta} { }
+                  m_build_meta{std::move(build_meta)} { }
 
-        numeric_part major() const { return m_major; }
-        numeric_part minor() const { return m_minor; }
-        numeric_part patch() const { return m_patch; }
-        std::string prerelease() const { return m_prerelease.str(); }
-        std::string build_meta() const { return m_build_meta; }
+        [[nodiscard]] uint64_t major() const { return m_major; }
+        [[nodiscard]] uint64_t minor() const { return m_minor; }
+        [[nodiscard]] uint64_t patch() const { return m_patch; }
+        [[nodiscard]] std::string prerelease() const { return m_prerelease.str(); }
+        [[nodiscard]] std::string build_meta() const { return m_build_meta; }
 
-        bool is_prerelease() const { return !m_prerelease.is_empty(); }
-        bool is_stable() const { return m_major > 0 && m_prerelease.is_empty(); }
+        [[nodiscard]] bool is_prerelease() const { return !m_prerelease.is_empty(); }
+        [[nodiscard]] bool is_stable() const { return m_major > 0 && m_prerelease.is_empty(); }
 
-        std::string str() const {
+        [[nodiscard]] std::string str() const {
             std::string result = std::to_string(m_major) + "." + std::to_string(m_minor) + "." + std::to_string(m_patch);
             if (!m_prerelease.is_empty()) result += "-" + m_prerelease.str();
             if (!m_build_meta.empty()) result += "+" + m_build_meta;
             return result;
         }
 
-        version without_suffixes() const {
+        [[nodiscard]] version without_suffixes() const {
             return version(m_major, m_minor, m_patch);
         }
 
-        version next_major(const std::string& prerelease = "") const {
+        [[nodiscard]] version next_major(const std::string& prerelease = "") const {
             return version(m_major + 1, 0, 0, prerelease);
         }
 
-        version next_minor(const std::string& prerelease = "") const {
+        [[nodiscard]] version next_minor(const std::string& prerelease = "") const {
             return version(m_major, m_minor + 1, 0, prerelease);
         }
 
-        version next_patch(const std::string& prerelease = "") const {
+        [[nodiscard]] version next_patch(const std::string& prerelease = "") const {
             return version(m_major, m_minor, (!is_prerelease() || !prerelease.empty() ? m_patch + 1 : m_patch), prerelease);
         }
 
-        version next_prerelease(const std::string& prerelease = "") const {
+        [[nodiscard]] version next_prerelease(const std::string& prerelease = "") const {
             std::string pre = default_prerelease_part;
             if (!prerelease.empty()) {
                 pre = is_prerelease() && m_prerelease.identity() == prerelease ? m_prerelease.increment().str() : prerelease;
@@ -281,7 +279,7 @@ namespace semver
             return version(m_major, m_minor, is_prerelease() ? m_patch : m_patch + 1, pre);
         }
 
-        version increment(inc by, const std::string& prerelease = "") const {
+        [[nodiscard]] version increment(inc by, const std::string& prerelease = "") const {
             switch (by) {
                 case semver::major: return next_major(prerelease);
                 case semver::minor: return next_minor(prerelease);
@@ -318,11 +316,11 @@ namespace semver
         static version parse(const std::string& version_str, bool strict = true) {
             std::regex regex(strict ? version_pattern : loose_version_pattern);
             std::cmatch match;
-            numeric_part major;
-            numeric_part minor;
-            numeric_part patch;
-            std::string prerelease = "";
-            std::string build_meta = "";
+            uint64_t major;
+            uint64_t minor;
+            uint64_t patch;
+            std::string prerelease;
+            std::string build_meta;
 
             if (!std::regex_match(version_str.c_str(), match, regex)) {
                 throw semver_exception("Invalid version: " + version_str);
