@@ -12,9 +12,17 @@ FetchContent_MakeAvailable(Catch2)
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 
 file(GLOB test-sources CONFIGURE_DEPENDS *.cpp)
-add_executable(${PROJECT_NAME}-tests "${test-sources}")
-
-target_link_libraries(${PROJECT_NAME}-tests PRIVATE Catch2::Catch2WithMain ${PROJECT_NAME})
 
 include(Catch)
-catch_discover_tests(${PROJECT_NAME}-tests)
+
+# add c++17 tests
+add_executable(${PROJECT_NAME}-tests-17 "${test-sources}")
+set_target_properties(${PROJECT_NAME}-tests-17 PROPERTIES CXX_STANDARD 17)
+target_link_libraries(${PROJECT_NAME}-tests-17 PRIVATE Catch2::Catch2WithMain ${PROJECT_NAME})
+catch_discover_tests(${PROJECT_NAME}-tests-17)
+
+# add c++17 tests
+add_executable(${PROJECT_NAME}-tests-20 "${test-sources}")
+set_target_properties(${PROJECT_NAME}-tests-20 PROPERTIES CXX_STANDARD 20)
+target_link_libraries(${PROJECT_NAME}-tests-20 PRIVATE Catch2::Catch2WithMain ${PROJECT_NAME})
+catch_discover_tests(${PROJECT_NAME}-tests-20)

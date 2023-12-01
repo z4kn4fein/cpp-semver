@@ -52,6 +52,7 @@ TEST_CASE("Test version compare, greater than, by prerelease", "[version][compar
     semver::version v = semver::version::parse("5.2.3-alpha.2");
     REQUIRE(v > semver::version::parse("5.2.3-alpha")); // by pre-release part count
     REQUIRE(v > semver::version::parse("5.2.3-alpha.1")); // by pre-release number comparison
+    REQUIRE(v < semver::version::parse("5.2.3-alpha.11")); // by pre-release number comparison
     REQUIRE(v > semver::version::parse("5.2.3-a")); // by pre-release alphabetical comparison
     REQUIRE(v >= semver::version::parse("5.2.3-alpha.2"));
 }
@@ -65,3 +66,16 @@ TEST_CASE("Test version equality", "[version][compare]") {
     REQUIRE(semver::version::parse("5.2.3-alpha.2+build.34") == semver::version::parse("5.2.3-alpha.2"));
     REQUIRE(semver::version::parse("5.2.3-alpha.2+build.34") == semver::version::parse("5.2.3-alpha.2+build.35"));
 }
+
+#ifdef __cpp_impl_three_way_comparison
+#if __cpp_impl_three_way_comparison >= 201907L
+
+    TEST_CASE("Test version 3-way compare", "[version][compare]") {
+        semver::version v = semver::version::parse("5.2.3");
+        REQUIRE((v <=> semver::version::parse("6.0.0")) < 0);
+        REQUIRE((v <=> semver::version::parse("4.0.0")) > 0);
+        REQUIRE((v <=> semver::version::parse("5.2.3")) == 0);
+    }
+
+#endif
+#endif

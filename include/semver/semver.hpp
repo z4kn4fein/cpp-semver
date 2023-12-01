@@ -25,10 +25,19 @@ SOFTWARE.
 #ifndef Z4KN4FEIN_SEMVER_H
 #define Z4KN4FEIN_SEMVER_H
 
+#include <ostream>
 #include <string>
 #include <regex>
 #include <utility>
 #include <vector>
+
+// conditionally include <format> and its dependency <string_view> for C++20
+#ifdef __cpp_lib_format
+#if __cpp_lib_format >= 201907L
+#include <format>
+#include <string_view>
+#endif
+#endif
 
 namespace semver
 {
@@ -313,6 +322,17 @@ namespace semver
             return compare(other) != 0;
         }
 
+        // conditionally provide three-way operator for C++20
+        #ifdef __cpp_impl_three_way_comparison
+        #if __cpp_impl_three_way_comparison >= 201907L
+
+        auto operator<=>(const version& other) const {
+            return compare(other);
+        }
+
+        #endif
+        #endif
+
         static version parse(const std::string& version_str, bool strict = true) {
             std::regex regex(strict ? version_pattern : loose_version_pattern);
             std::cmatch match;
@@ -371,5 +391,20 @@ namespace semver
         }
     }
 }
+
+// conditionally provide formatter for C++20
+#ifdef __cpp_lib_format
+#if __cpp_lib_format >= 201907L
+
+template <>
+struct std::formatter<semver::version> : std::formatter<std::string_view> {
+    template <typename FormatContext>
+    auto format(const semver::version& version, FormatContext& ctx) const {
+        return std::formatter<std::string_view>::format(version.str(), ctx);
+    }
+};
+
+#endif
+#endif
 
 #endif // Z4KN4FEIN_SEMVER_H
