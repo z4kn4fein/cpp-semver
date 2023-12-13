@@ -8,7 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest ]
-        compiler: [ clang++ ]
+        compiler: [ clang++-15 ]
         flags:
           - "-fsanitize=leak -g -O1 -fno-omit-frame-pointer"           #LSAN
           - "-fsanitize=address -g -O1 -fno-omit-frame-pointer"        #ASAN
