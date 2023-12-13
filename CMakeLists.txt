@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(semver LANGUAGES CXX VERSION 0.3.1)
+project(semver LANGUAGES CXX VERSION 0.3.3)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -16,13 +16,13 @@ include(GNUInstallDirs)
 ## --------------------------------------------------------------------
 ## Build
 ## --------------------------------------------------------------------
-message(PROJECT_NAME: ${PROJECT_NAME})
-message(CMAKE_HOST_SYSTEM: ${CMAKE_HOST_SYSTEM})
-message(CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE})
-message(CMAKE_CXX_COMPILER: ${CMAKE_CXX_COMPILER})
-message(CMAKE_CXX_COMPILER_ID: ${CMAKE_CXX_COMPILER_ID})
-message(CMAKE_CXX_COMPILER_VERSION: ${CMAKE_CXX_COMPILER_VERSION})
-message(CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS})
+message(STATUS "PROJECT_NAME: ${PROJECT_NAME}")
+message(VERBOSE "  CMAKE_HOST_SYSTEM: ${CMAKE_HOST_SYSTEM}")
+message(VERBOSE "  CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
+message(VERBOSE "  CMAKE_CXX_COMPILER: ${CMAKE_CXX_COMPILER}")
+message(VERBOSE "  CMAKE_CXX_COMPILER_ID: ${CMAKE_CXX_COMPILER_ID}")
+message(VERBOSE "  CMAKE_CXX_COMPILER_VERSION: ${CMAKE_CXX_COMPILER_VERSION}")
+message(VERBOSE "  CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 add_library(${PROJECT_NAME} INTERFACE)
 add_library (${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
