@@ -10,10 +10,10 @@ jobs:
         os: [ ubuntu-latest ]
         compiler: [ clang++ ]
         flags:
-          - "-fsanitize=leak -g -O1 -fno-omit-frame-pointer"                                         #LSAN
-          - "-fsanitize=address -g -O1 -fno-omit-frame-pointer"                                      #ASAN
-          - "-fsanitize=thread -g -O1 -fno-omit-frame-pointer"                                       #TSAN
-          - "-fsanitize=undefined -fno-omit-frame-pointer"                                           #UBSAN
+          - "-fsanitize=leak -g -O1 -fno-omit-frame-pointer"           #LSAN
+          - "-fsanitize=address -g -O1 -fno-omit-frame-pointer"        #ASAN
+          - "-fsanitize=thread -g -O1 -fno-omit-frame-pointer"         #TSAN
+          - "-fsanitize=undefined -fno-omit-frame-pointer"             #UBSAN
     name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build}} ${{matrix.flags}}
     env:
       CXX: ${{ matrix.compiler }}

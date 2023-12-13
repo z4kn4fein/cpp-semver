@@ -2,28 +2,49 @@ name: CPP Semver CI
 on: [push, pull_request]
 
 jobs:
-  unix:
+  macos:
     runs-on: ${{matrix.os}}
     strategy:
       matrix:
-        build: [Debug, Release]
-        os: [macos-latest, ubuntu-latest]
-        compiler: [g++, clang++]
-        flags: [-std=c++17, -std=c++2a]
-    name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build}} ${{matrix.flags}}
+        os: [ macos-latest ]
+        build: [ Debug, Release ]
+        compiler: [ clang++ ]
+        std_version: [ 17, 20 ]
+    name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build}} std:${{matrix.std_version}}
     env:
-      CXX: ${{ matrix.compiler }}
-      CXXFLAGS: ${{ matrix.flags }}
+      CXX: ${{matrix.compiler}}
       CTEST_OUTPUT_ON_FAILURE: 1
     steps:
     - uses: actions/checkout@v3
     - name: cmake
-      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{matrix.build}}
+      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{matrix.build}} -DCMAKE_CXX_STANDARD=${{matrix.std_version}}
     - name: build
       run: cmake --build build --config ${{matrix.build}} --parallel 4
     - name: test
       working-directory: build
       run: ctest -C ${{matrix.build}} -j4
+
+  linux:
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        build: [ Debug, Release ]
+        compiler: [ g++-11, g++-12, g++-13, clang++-15 ]
+        std_version: [ 17, 20 ]
+    name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build}} std:${{matrix.std_version}}
+    env:
+      CXX: ${{matrix.compiler}}
+      CTEST_OUTPUT_ON_FAILURE: 1
+    steps:
+      - uses: actions/checkout@v3
+      - name: cmake
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{matrix.build}} -DCMAKE_CXX_STANDARD=${{matrix.std_version}}
+      - name: build
+        run: cmake --build build --config ${{matrix.build}} --parallel 4
+      - name: test
+        working-directory: build
+        run: ctest -C ${{matrix.build}} -j4
 
   windows:
     runs-on: ${{matrix.os}}
@@ -32,15 +53,14 @@ jobs:
         build: [ Debug, Release ]
         os: [ windows-2019, windows-latest ]
         arch: [ Win32, x64 ]
-        flags: [ "/std:c++17", "/std:c++latest" ]
-    name: ${{matrix.os}} ${{matrix.arch}} ${{matrix.build}} ${{matrix.flags}}
+        std_version: [ 17, 20 ]
+    name: ${{matrix.os}} ${{matrix.arch}} ${{matrix.build}} std:${{matrix.std_version}}
     env:
-      CXXFLAGS: ${{ matrix.flags }}
       CTEST_OUTPUT_ON_FAILURE: 1
     steps:
     - uses: actions/checkout@v3
     - name: cmake
-      run: cmake -S . -B build -A ${{matrix.arch}} -DCMAKE_BUILD_TYPE=${{matrix.build}}
+      run: cmake -S . -B build -A ${{matrix.arch}} -DCMAKE_BUILD_TYPE=${{matrix.build}} -DCMAKE_CXX_STANDARD=${{matrix.std_version}}
     - name: build
       run: cmake --build build --config ${{matrix.build}} --parallel 4
     - name: test
@@ -48,7 +68,7 @@ jobs:
       run: ctest -C ${{matrix.build}} -j4
 
   coverage:
-    needs: [ unix, windows ]
+    needs: [ macos, linux, windows ]
     runs-on: ubuntu-latest
     env:
       CTEST_OUTPUT_ON_FAILURE: 1

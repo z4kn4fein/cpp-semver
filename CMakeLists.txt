@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 project(semver LANGUAGES CXX VERSION 0.3.3)
 
-set(CMAKE_CXX_STANDARD 17)
-
 set(TOP_PROJECT OFF)
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     set(TOP_PROJECT ON)
@@ -30,6 +28,8 @@ target_include_directories(
         ${PROJECT_NAME} INTERFACE
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>)
+
+target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_17)
 
 ## --------------------------------------------------------------------
 ## TESTS
