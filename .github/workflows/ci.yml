@@ -9,15 +9,14 @@ jobs:
         os: [ macos-latest ]
         build: [ Debug, Release ]
         compiler: [ clang++ ]
-        std_version: [ 17, 20 ]
-    name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build}} std:${{matrix.std_version}}
+    name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build}}
     env:
       CXX: ${{matrix.compiler}}
       CTEST_OUTPUT_ON_FAILURE: 1
     steps:
     - uses: actions/checkout@v3
     - name: cmake
-      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{matrix.build}} -DCMAKE_CXX_STANDARD=${{matrix.std_version}}
+      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{matrix.build}}
     - name: build
       run: cmake --build build --config ${{matrix.build}} --parallel 4
     - name: test
@@ -31,15 +30,14 @@ jobs:
         os: [ ubuntu-latest ]
         build: [ Debug, Release ]
         compiler: [ g++-11, g++-12, g++-13, clang++-15 ]
-        std_version: [ 17, 20 ]
-    name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build}} std:${{matrix.std_version}}
+    name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build}}
     env:
       CXX: ${{matrix.compiler}}
       CTEST_OUTPUT_ON_FAILURE: 1
     steps:
       - uses: actions/checkout@v3
       - name: cmake
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{matrix.build}} -DCMAKE_CXX_STANDARD=${{matrix.std_version}}
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{matrix.build}}
       - name: build
         run: cmake --build build --config ${{matrix.build}} --parallel 4
       - name: test
@@ -53,14 +51,13 @@ jobs:
         build: [ Debug, Release ]
         os: [ windows-2019, windows-latest ]
         arch: [ Win32, x64 ]
-        std_version: [ 17, 20 ]
-    name: ${{matrix.os}} ${{matrix.arch}} ${{matrix.build}} std:${{matrix.std_version}}
+    name: ${{matrix.os}} ${{matrix.arch}} ${{matrix.build}}
     env:
       CTEST_OUTPUT_ON_FAILURE: 1
     steps:
     - uses: actions/checkout@v3
     - name: cmake
-      run: cmake -S . -B build -A ${{matrix.arch}} -DCMAKE_BUILD_TYPE=${{matrix.build}} -DCMAKE_CXX_STANDARD=${{matrix.std_version}}
+      run: cmake -S . -B build -A ${{matrix.arch}} -DCMAKE_BUILD_TYPE=${{matrix.build}}
     - name: build
       run: cmake --build build --config ${{matrix.build}} --parallel 4
     - name: test
