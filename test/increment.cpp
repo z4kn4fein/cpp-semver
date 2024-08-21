@@ -1,5 +1,11 @@
-#include <catch2/catch_all.hpp>
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/generators/catch_generators.hpp>
+
+#ifdef SEMVER_TEST_MODULE
+import semver;
+#else
 #include <semver/semver.hpp>
+#endif
 
 TEST_CASE("Test version incrementation", "[version][increment]") {
     semver::version v = semver::version::parse("1.2.3-alpha.4+build.3");

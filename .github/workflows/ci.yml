@@ -5,8 +5,9 @@ jobs:
   macos:
     runs-on: ${{matrix.os}}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ macos-latest ]
+        os: [ macos-13 ]
         build: [ Debug, Release ]
         compiler: [ clang++ ]
     name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build}}
@@ -24,20 +25,30 @@ jobs:
       run: ctest -C ${{matrix.build}} -j4
 
   linux:
-    runs-on: ${{matrix.os}}
+    runs-on: ${{matrix.platform.os}}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ ubuntu-latest ]
         build: [ Debug, Release ]
-        compiler: [ g++-11, g++-12, g++-13, clang++-15 ]
-    name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build}}
+        platform:
+          - { os: "ubuntu-22.04", cxx: "g++-11", modules: "OFF" }
+          - { os: "ubuntu-22.04", cxx: "g++-12", modules: "OFF" }
+          - { os: "ubuntu-24.04", cxx: "g++-13", modules: "OFF" }
+          - { os: "ubuntu-24.04", cxx: "g++-14", modules: "ON" }
+          - { os: "ubuntu-22.04", cxx: "clang++-15", modules: "OFF" }
+          - { os: "ubuntu-24.04", cxx: "clang++-16", modules: "ON" }
+    name: ${{matrix.platform.os}} ${{matrix.platform.cxx}} ${{matrix.build}}
     env:
-      CXX: ${{matrix.compiler}}
+      CXX: ${{matrix.platform.cxx}}
       CTEST_OUTPUT_ON_FAILURE: 1
     steps:
       - uses: actions/checkout@v3
+      - name: Install Ninja
+        run: sudo apt install ninja-build
       - name: cmake
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{matrix.build}}
+        run: cmake -GNinja -S . -B build
+          -DCMAKE_BUILD_TYPE=${{matrix.build}} 
+          -DSEMVER_BUILD_MODULE=${{matrix.platform.modules}}
       - name: build
         run: cmake --build build --config ${{matrix.build}} --parallel 4
       - name: test
@@ -47,17 +58,24 @@ jobs:
   windows:
     runs-on: ${{matrix.os}}
     strategy:
+      fail-fast: false
       matrix:
         build: [ Debug, Release ]
         os: [ windows-2019, windows-latest ]
         arch: [ Win32, x64 ]
-    name: ${{matrix.os}} ${{matrix.arch}} ${{matrix.build}}
+        modules: [ "OFF", "ON" ]
+        exclude:
+          - os: windows-2019
+            modules: "ON"
+    name: ${{matrix.os}} ${{matrix.arch}} ${{matrix.build}} ${{matrix.modules}}
     env:
       CTEST_OUTPUT_ON_FAILURE: 1
     steps:
     - uses: actions/checkout@v3
     - name: cmake
-      run: cmake -S . -B build -A ${{matrix.arch}} -DCMAKE_BUILD_TYPE=${{matrix.build}}
+      run: cmake -S . -B build -A ${{matrix.arch}} 
+        -DCMAKE_BUILD_TYPE=${{matrix.build}}
+        -DSEMVER_BUILD_MODULE=${{matrix.modules}}
     - name: build
       run: cmake --build build --config ${{matrix.build}} --parallel 4
     - name: test

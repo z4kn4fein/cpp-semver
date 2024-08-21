@@ -1,7 +1,7 @@
 /*
 License: MIT (http://opensource.org/licenses/MIT).
 
-Copyright (c) 2022 Peter Csajtai <peter.csajtai@outlook.com>
+Copyright (c) 2024 Peter Csajtai <peter.csajtai@outlook.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@ SOFTWARE.
 #ifndef Z4KN4FEIN_SEMVER_H
 #define Z4KN4FEIN_SEMVER_H
 
+#ifndef SEMVER_MODULE
 #include <ostream>
 #include <string>
 #include <regex>
@@ -38,11 +39,17 @@ SOFTWARE.
 #include <string_view>
 #endif
 #endif
+#endif
+
+#ifdef SEMVER_MODULE
+#define SEMVER_EXPORT export
+#else
+#define SEMVER_EXPORT
+#endif
 
 namespace semver
 {
     const std::string default_prerelease_part = "0";
-    const char prerelease_delimiter = '.';
     const std::string numbers = "0123456789";
     const std::string prerelease_allowed_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-";
     const std::string version_pattern = "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)"
@@ -52,7 +59,7 @@ namespace semver
                                               "?(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))"
                                               "?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$";
 
-    struct semver_exception : public std::runtime_error {
+    SEMVER_EXPORT struct semver_exception : public std::runtime_error {
         explicit semver_exception(const std::string& message) : std::runtime_error(message) { }
     };
 
@@ -117,14 +124,14 @@ namespace semver
         [[nodiscard]] int compare(const prerelease_part& other) const {
             if (m_numeric && !other.m_numeric) return -1;
             if (!m_numeric && other.m_numeric) return 1;
-            if (m_numeric && other.m_numeric) {
+            if (m_numeric) {
                 return (m_numeric_value < other.m_numeric_value) ? -1 : (m_numeric_value > other.m_numeric_value);
             }
             return (m_value < other.m_value) ? -1 : (m_value > other.m_value);
         }
     };
 
-    class prerelease_descriptor {
+    SEMVER_EXPORT class prerelease_descriptor {
     private:
         std::vector<prerelease_part> m_parts;
         std::string prerelease_str;
@@ -133,7 +140,7 @@ namespace semver
                 : m_parts(parts) {
             if (parts.empty()) prerelease_str = "";
             for (const auto &part : parts) {
-                if (!prerelease_str.empty()) prerelease_str += prerelease_delimiter;
+                if (!prerelease_str.empty()) prerelease_str += ".";
                 prerelease_str += part.value();
             }
         }
@@ -196,7 +203,7 @@ namespace semver
         static prerelease_descriptor parse(const std::string& prerelease_part_str) {
             if (prerelease_part_str.empty()) return empty();
             std::vector<prerelease_part> prerelease_parts;
-            std::vector<std::string> parts = split(prerelease_part_str, prerelease_delimiter);
+            std::vector<std::string> parts = split(prerelease_part_str, '.');
             for(auto& part : parts) {
                 prerelease_parts.emplace_back(part);
             }
@@ -212,9 +219,9 @@ namespace semver
         }
     };
 
-    enum inc { major, minor, patch, prerelease };
+    SEMVER_EXPORT enum inc { major, minor, patch, prerelease };
 
-    class version {
+    SEMVER_EXPORT class version {
     private:
         uint64_t m_major;
         uint64_t m_minor;
@@ -375,18 +382,18 @@ namespace semver
         }
     };
 
-    inline std::ostream & operator<<(std::ostream& str, const version& version) {
+    SEMVER_EXPORT inline std::ostream & operator<<(std::ostream& str, const version& version) {
         for (const auto s : version.str()) str.put(s);
         return str;
     }
 
     namespace literals
     {
-        inline version operator""_v(const char* text, std::size_t length) {
+        SEMVER_EXPORT inline version operator""_v(const char* text, std::size_t length) {
             return version::parse(std::string(text, length));
         }
 
-        inline version operator""_lv(const char* text, std::size_t length) {
+        SEMVER_EXPORT inline version operator""_lv(const char* text, std::size_t length) {
             return version::parse(std::string(text, length), false);
         }
     }
@@ -396,9 +403,9 @@ namespace semver
 #ifdef __cpp_lib_format
 #if __cpp_lib_format >= 201907L
 
-template <>
-struct std::formatter<semver::version> : std::formatter<std::string_view> {
-    template <typename FormatContext>
+template <class CharT>
+struct std::formatter<semver::version, CharT> : std::formatter<std::string_view> {
+    template <class FormatContext>
     auto format(const semver::version& version, FormatContext& ctx) const {
         return std::formatter<std::string_view>::format(version.str(), ctx);
     }

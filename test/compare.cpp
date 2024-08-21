@@ -1,5 +1,10 @@
-#include <catch2/catch_all.hpp>
+#include <catch2/catch_test_macros.hpp>
+
+#ifdef SEMVER_TEST_MODULE
+import semver;
+#else
 #include <semver/semver.hpp>
+#endif
 
 TEST_CASE("Test version compare, less than, by numbers", "[version][compare]") {
     semver::version v = semver::version::parse("5.2.3");

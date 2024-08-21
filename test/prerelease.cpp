@@ -1,5 +1,10 @@
-#include <catch2/catch_all.hpp>
+#include <catch2/catch_test_macros.hpp>
+
+#ifdef SEMVER_TEST_MODULE
+import semver;
+#else
 #include <semver/semver.hpp>
+#endif
 
 TEST_CASE("Test invalid pre-releases", "[prerelease]") {
     REQUIRE_THROWS_AS(semver::prerelease_descriptor::parse(".alpha"), semver::semver_exception);

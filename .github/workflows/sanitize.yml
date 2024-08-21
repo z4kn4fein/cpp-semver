@@ -7,16 +7,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest ]
-        compiler: [ clang++-15 ]
+        os: [ ubuntu-20.04 ]
         flags:
           - "-fsanitize=leak -g -O1 -fno-omit-frame-pointer"           #LSAN
           - "-fsanitize=address -g -O1 -fno-omit-frame-pointer"        #ASAN
           - "-fsanitize=thread -g -O1 -fno-omit-frame-pointer"         #TSAN
           - "-fsanitize=undefined -fno-omit-frame-pointer"             #UBSAN
-    name: ${{matrix.os}} ${{matrix.compiler}} ${{matrix.build}} ${{matrix.flags}}
+    name: ${{matrix.os}} ${{matrix.flags}}
     env:
-      CXX: ${{ matrix.compiler }}
+      CXX: clang++
       CXXFLAGS: ${{ matrix.flags }}
       CTEST_OUTPUT_ON_FAILURE: 1
     steps:

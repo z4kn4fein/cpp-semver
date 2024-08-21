@@ -1,5 +1,10 @@
-#include <catch2/catch_all.hpp>
+#include <catch2/catch_test_macros.hpp>
+
+#ifdef SEMVER_TEST_MODULE
+import semver;
+#else
 #include <semver/semver.hpp>
+#endif
 
 using namespace semver::literals;
 
