@@ -32,6 +32,17 @@ provides the ability to **parse**, **compare**, and **increment** semantic versi
        GIT_TAG v0.4.0)
    FetchContent_MakeAvailable(cpp-semver)
    ```
+   > [!NOTE]\
+   > To use the lib as a C++20 module, you have to turn the `SEMVER_BUILD_MODULE` option `ON`:
+   > ```cmake
+   > set(SEMVER_BUILD_MODULE ON)
+   > 
+   > FetchContent_Declare(#[[...]])
+   > ```
+   > Then you can import the package:
+   > ```cpp
+   > import semver;
+   > ```
 
    This will produce the target `semver` which you can link against the typical way:
 
