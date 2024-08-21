@@ -32,7 +32,7 @@ provides the ability to **parse**, **compare**, and **increment** semantic versi
        GIT_TAG v0.4.0)
    FetchContent_MakeAvailable(cpp-semver)
    ```
-   > [!NOTE]\
+   > [!TIP]
    > To use the lib as a C++20 module, you have to turn the `SEMVER_BUILD_MODULE` option `ON`:
    > ```cmake
    > set(SEMVER_BUILD_MODULE ON)
