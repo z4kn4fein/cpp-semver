@@ -107,5 +107,7 @@ jobs:
       working-directory: build
       shell: bash
       run: bash <(curl -s https://codecov.io/bash) -f cov.info
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
 
