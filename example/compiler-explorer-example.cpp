@@ -1,5 +1,5 @@
 #include <iostream>
-#include "https://raw.githubusercontent.com/z4kn4fein/cpp-semver/main/include/semver/semver.hpp"
+#include "semver/semver.hpp"
 
 using namespace std;
 using namespace semver::literals;

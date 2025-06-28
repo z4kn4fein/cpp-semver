@@ -1,0 +1,3 @@
+module( name = "cpp-semver")
+
+bazel_dep(name = "catch2", version = "3.6.0")

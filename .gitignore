@@ -36,3 +36,7 @@
 /build
 /cmake-build-debug
 /out
+
+# Bazel files
+bazel-*
+MODULE.bazel.lock
