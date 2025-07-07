@@ -8,7 +8,7 @@ cc_library(
 
 cc_binary(
     name = "cpp-semver-example",
-    srcs = ["example/compiler-explorer-example.cpp"],
+    srcs = ["example/example.cpp"],
     deps = [":cpp-semver"],
     visibility = ["//visibility:public"],
 )

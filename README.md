@@ -59,7 +59,7 @@ provides the ability to **parse**, **compare**, and **increment** semantic versi
 
 4. With `Bazel`
 
-   ```
+   ```python
    bazel_dep(name = "cpp-semver", version = "<cpp-semver-version>")
 
    git_override(
@@ -70,14 +70,13 @@ provides the ability to **parse**, **compare**, and **increment** semantic versi
    ```
    
    Then, you can add `cpp-semver` to your dependency list:
-   ```
+   ```python
    cc_library(
     name = "example-library",
     deps = ["@cpp-semver//:cpp-semver"], 
    )
    ```
 
-   > [!NOTE]
    > C++ module support for *Bazel* has not been added yet.
 
 ## Usage

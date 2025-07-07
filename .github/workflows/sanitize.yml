@@ -1,5 +1,14 @@
 name: CPP Semver Sanitize
-on: [push, pull_request]
+
+on:
+  push:
+    branches: [ '*' ]
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
 
 jobs:
   sanitize:
