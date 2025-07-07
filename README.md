@@ -57,6 +57,28 @@ provides the ability to **parse**, **compare**, and **increment** semantic versi
    vcpkg install z4kn4fein-semver
    ```
 
+4. With `Bazel`
+   If you wish to use Bazel add MODULE.bazel
+   ```
+   bazel_dep(name = "cpp-semver", version = "<cpp-semver-version>")
+
+   git_override(
+    module_name = "cpp-semver",
+    remote = "https://github.com/z4kn4fein/cpp-semver.git",
+    tag = "<cpp-semver-version>"
+   )
+
+   ```
+   and include cpp-semver to your dependency list. Example is given below: 
+   ```
+   cc_library(
+    name = "example-library",
+    deps = ["@cpp-semver//:cpp-semver"], 
+   )
+   ```
+
+   Note: C++ module support for *Bazel* has not been added yet.
+
 ## Usage
 The following options are available to construct a `version`:
 1. Building part by part.

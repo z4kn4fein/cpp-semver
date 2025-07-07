@@ -1,0 +1,66 @@
+
+cc_library(
+    name = "cpp-semver",
+    hdrs = ["include/semver/semver.hpp"],
+    includes = ["include"],
+    visibility = ["//visibility:public"],
+)
+
+cc_binary(
+    name = "cpp-semver-example",
+    srcs = ["example/compiler-explorer-example.cpp"],
+    deps = [":cpp-semver"],
+    visibility = ["//visibility:public"],
+)
+
+cc_test(
+    name = "cpp-semver-compare",
+    srcs = ["test/compare.cpp"],
+    deps = [":cpp-semver",
+            "@catch2//:catch2_main",],
+    visibility = ["//visibility:public"],
+)
+
+cc_test(
+    name = "cpp-semver-increment",
+    srcs = ["test/increment.cpp"],
+    deps = [":cpp-semver",
+            "@catch2//:catch2_main",],
+    visibility = ["//visibility:public"],
+)
+
+cc_test(
+    name = "cpp-semver-prerelease",
+    srcs = ["test/prerelease.cpp"],
+    deps = [":cpp-semver",
+            "@catch2//:catch2_main",],
+    visibility = ["//visibility:public"],
+)
+
+cc_test(
+    name = "cpp-semver-serialization",
+    srcs = ["test/serialization.cpp"],
+    deps = [":cpp-semver",
+            "@catch2//:catch2_main",],
+    visibility = ["//visibility:public"],
+)
+
+cc_test(
+    name = "cpp-semver-version",
+    srcs = ["test/version.cpp"],
+    deps = [":cpp-semver",
+             "@catch2//:catch2_main"],
+    visibility = ["//visibility:public"],   
+)
+
+test_suite(
+    name = "cpp-semver-tests",
+    tests = [
+        ":cpp-semver-compare",
+        ":cpp-semver-increment",
+        ":cpp-semver-prerelease",
+        ":cpp-semver-serialization",
+        ":cpp-semver-version",
+    ],
+    visibility = ["//visibility:public"],
+)
