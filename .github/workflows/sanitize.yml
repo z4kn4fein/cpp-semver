@@ -7,7 +7,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-20.04 ]
+        os: [ ubuntu-latest ]
         flags:
           - "-fsanitize=leak -g -O1 -fno-omit-frame-pointer"           #LSAN
           - "-fsanitize=address -g -O1 -fno-omit-frame-pointer"        #ASAN

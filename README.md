@@ -45,7 +45,7 @@ provides the ability to **parse**, **compare**, and **increment** semantic versi
    
    FetchContent_Declare(#[[...]])
    ```
-   Then you can import the package:
+   Then, you can import the package:
    ```cpp
    import semver;
    ```
@@ -58,7 +58,7 @@ provides the ability to **parse**, **compare**, and **increment** semantic versi
    ```
 
 4. With `Bazel`
-   If you wish to use Bazel add MODULE.bazel
+
    ```
    bazel_dep(name = "cpp-semver", version = "<cpp-semver-version>")
 
@@ -67,9 +67,9 @@ provides the ability to **parse**, **compare**, and **increment** semantic versi
     remote = "https://github.com/z4kn4fein/cpp-semver.git",
     tag = "<cpp-semver-version>"
    )
-
    ```
-   and include cpp-semver to your dependency list. Example is given below: 
+   
+   Then, you can add `cpp-semver` to your dependency list:
    ```
    cc_library(
     name = "example-library",
@@ -77,7 +77,8 @@ provides the ability to **parse**, **compare**, and **increment** semantic versi
    )
    ```
 
-   Note: C++ module support for *Bazel* has not been added yet.
+   > [!NOTE]\
+   > Note: C++ module support for *Bazel* has not been added yet.
 
 ## Usage
 The following options are available to construct a `version`:
