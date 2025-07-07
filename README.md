@@ -77,8 +77,8 @@ provides the ability to **parse**, **compare**, and **increment** semantic versi
    )
    ```
 
-   > [!NOTE]\
-   > Note: C++ module support for *Bazel* has not been added yet.
+   > [!NOTE]
+   > C++ module support for *Bazel* has not been added yet.
 
 ## Usage
 The following options are available to construct a `version`:

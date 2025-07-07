@@ -19,7 +19,7 @@ jobs:
       CXXFLAGS: ${{ matrix.flags }}
       CTEST_OUTPUT_ON_FAILURE: 1
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: cmake
       run: cmake -S . -B build
     - name: build

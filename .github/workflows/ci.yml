@@ -15,7 +15,7 @@ jobs:
       CXX: ${{matrix.compiler}}
       CTEST_OUTPUT_ON_FAILURE: 1
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: cmake
       run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{matrix.build}}
     - name: build
@@ -42,7 +42,7 @@ jobs:
       CXX: ${{matrix.platform.cxx}}
       CTEST_OUTPUT_ON_FAILURE: 1
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Ninja
         run: sudo apt install ninja-build
       - name: cmake
@@ -68,7 +68,7 @@ jobs:
     env:
       CTEST_OUTPUT_ON_FAILURE: 1
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: cmake
       run: cmake -S . -B build -A ${{matrix.arch}} 
         -DCMAKE_BUILD_TYPE=${{matrix.build}}
@@ -86,7 +86,7 @@ jobs:
       CTEST_OUTPUT_ON_FAILURE: 1
       CXXFLAGS: "--coverage -fno-inline"
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: cmake
       run: cmake -S . -B build
     - name: build
@@ -98,7 +98,7 @@ jobs:
       working-directory: build
       run: |
         sudo apt install lcov
-        lcov -c -d . -o cov.info
+        lcov -c -d . -o cov.info --keep-going
         lcov -l cov.info
     - name: codecov
       working-directory: build
