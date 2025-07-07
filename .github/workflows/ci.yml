@@ -88,8 +88,17 @@ jobs:
       working-directory: build
       run: ctest -C ${{matrix.build}} -j4
 
+  bazel:
+    runs-on: ubuntu-latest
+    name: Bazel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: bazel-contrib/setup-bazel@0.15.0
+      - name: test
+        run: bazel test :cpp-semver-tests
+
   coverage:
-    needs: [ macos, linux, windows ]
+    needs: [ macos, linux, windows, bazel ]
     runs-on: ubuntu-latest
     env:
       CTEST_OUTPUT_ON_FAILURE: 1
